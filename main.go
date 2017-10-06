@@ -26,7 +26,7 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				t.filename)))
 	})
 
-	rows, err := t.db.Query("SELECT * FROM comments")
+	rows, err := t.db.Query("SELECT * FROM `test`.comments")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -49,11 +49,20 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	dbHost := os.Getenv("DB_HOST")
-	db, err := sql.Open("mysql", "root@tcp("+dbHost+":3306)/test")
+	db, err := sql.Open("mysql", "root@tcp("+dbHost+":3306)/")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
+
+	db.Query("CREATE DATABASE IF NOT EXISTS `test`")
+	db.Query(`
+		CREATE TABLE test.comments (
+		  id int(11) unsigned NOT NULL AUTO_INCREMENT,
+		  text varchar(255) DEFAULT NULL,
+		  PRIMARY KEY (id)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	`)
 
 	http.Handle("/", &templateHandler{filename: "index.html", db: db})
 
