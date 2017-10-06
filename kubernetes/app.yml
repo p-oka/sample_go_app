@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sample-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+        - name: web
+          image: sample/goapp:0.1.0
+          command: ["go", "run", "main.go"]
+          env:
+            - name: DB_HOST
+              value: 10.0.0.16 # ここを動的に設定する方法が分からない...できないかも
+          volumeMounts:
+            - mountPath: /go/src/app
+              name: app-dir
+          ports:
+            - containerPort: 8080
+              name: web
+      volumes:
+        - name: app-dir
+          hostPath:
+            path: /app_dir/github.com/p-oka/sample_go_app/
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-service
+spec:
+  selector:
+    app: sample-app
+  type: NodePort
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8080
