@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sync"
 
@@ -47,7 +48,8 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db, err := sql.Open("mysql", "mysql:root@tcp(127.0.0.1:3306)/test")
+	dbHost := os.Getenv("DB_HOST")
+	db, err := sql.Open("mysql", "root@tcp("+dbHost+":3306)/test")
 	if err != nil {
 		panic(err.Error())
 	}
