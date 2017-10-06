@@ -1,0 +1,17 @@
+<html>
+	<head>
+		<title>Golang Sample App</title>
+	</head>
+	<body>
+		<table>
+			<tr>
+				<th>コメント</th>
+			</tr>
+			{{ range . }}
+				<tr>
+					<td>{{ . }}</td>
+				</tr>
+			{{ end }}
+		</table>
+	</body>
+</html>
